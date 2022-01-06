@@ -21,6 +21,7 @@ contract Keyboards {
 
         address owner;
     }
+
     Keyboard[] public createdKeyboards;
 
     event KeyboardCreated(
@@ -32,7 +33,7 @@ contract Keyboards {
         uint256 amount
     );
 
-    function getKeyboards() public view returns (Keyboard[] memory) {
+    function getKeyboards() view public returns (Keyboard[] memory) {
         return createdKeyboards;
     }
 

@@ -1,38 +1,32 @@
-import { ethers } from "ethers";
+
 import Router from "next/router";
 import { useState, useEffect } from "react";
 import PrimaryButton from "../components/primary-button";
-import abi from "../utils/Keyboards.json"
+
 import Keyboard from "../components/keyboard";
+import getKeyboardsContract from "../utils/getKeyboardsContract";
 import { useMetaMaskAccount } from "../components/meta-mask-account-provider";
 export default function Create() {
 
-   
+
     const [keyboardKind, setKeyboardKind] = useState(0)
     const [isPBT, setIsPBT] = useState(false)
     const [filter, setFilter] = useState('')
     const [mining, setMining] = useState(false);
     const { ethereum, connectedAccount, connectAccount } = useMetaMaskAccount();
 
-    const contractAddress = '0x0eCE0711233b8DfeBdAf5b8DD314BC28C526c564';
-    const contractABI = abi.abi;
+    const keyboardsContract = getKeyboardsContract(ethereum);
 
     const submitCreate = async (e) => {
         e.preventDefault();
 
-        if (!ethereum) {
-            console.error('Ethereum object is required to create a keyboard');
+        if (!keyboardsContract) {
+            console.error('KeyboardsContract object is required to create a keyboard');
             return;
         }
 
         setMining(true);
-
         try {
-
-            const provider = new ethers.providers.Web3Provider(ethereum);
-            const signer = provider.getSigner();
-            const keyboardsContract = new ethers.Contract(contractAddress, contractABI, signer);
-
             const createTxn = await keyboardsContract.create(keyboardKind, isPBT, filter)
             console.log('Create transaction started...', createTxn.hash)
 
@@ -40,12 +34,9 @@ export default function Create() {
             console.log('Created keyboard!', createTxn.hash);
 
             Router.push('/');
-
-        } finally{
+        } finally {
             setMining(false);
         }
-
-        
     }
 
     if (!ethereum) {
@@ -114,9 +105,10 @@ export default function Create() {
                 </div>
 
                 <PrimaryButton type="submit" disabled={mining} onClick={submitCreate}>
-                    {mining ? "Creating..." : "Create Keyboard"}
+                    {mining ? "Creating..." : "Create Keyboard!"}
                 </PrimaryButton>
             </form>
+
             <div>
                 <h2 className="block text-lg font-medium text-gray-700">Preview</h2>
                 <Keyboard kind={keyboardKind} isPBT={isPBT} filter={filter} />

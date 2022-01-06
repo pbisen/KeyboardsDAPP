@@ -20,9 +20,6 @@ export default function Home() {
 
   const keyboardsContract = getKeyboardsContract(ethereum);
 
-  const contractAddress = '0x0eCE0711233b8DfeBdAf5b8DD314BC28C526c564';
-  const contractABI = abi.abi;
-
 
   const getKeyboards = async () => {
     if (ethereum && connectedAccount) {
